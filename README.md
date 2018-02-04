@@ -42,4 +42,4 @@ log.Printf("Collector %d: %s\n", collector.Id, collector.Name)
 
 ## Development
 
-Run unit tests with `go test`.
+Run unit tests with `make test`.
