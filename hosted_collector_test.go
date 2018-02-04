@@ -70,7 +70,7 @@ func TestGetHostedCollectorOK(t *testing.T) {
 		return
 	}
 	if returnedCollector.ID != defaultCollector.ID {
-		t.Errorf("GetHostedCollector() expected ID `%s`, got `%s`", defaultCollector.ID, returnedCollector.ID)
+		t.Errorf("GetHostedCollector() expected ID `%d`, got `%d`", defaultCollector.ID, returnedCollector.ID)
 		return
 	}
 }
@@ -147,7 +147,7 @@ func TestCreateHostedCollectorOK(t *testing.T) {
 		return
 	}
 	if returnedCollector.ID != 1234567890 {
-		t.Errorf("CreateHostedCollector() expected ID 1234567890, got `%s`", returnedCollector.ID)
+		t.Errorf("CreateHostedCollector() expected ID 1234567890, got `%d`", returnedCollector.ID)
 		return
 	}
 }
@@ -217,7 +217,7 @@ func TestUpdateHostedCollectorOK(t *testing.T) {
 		return
 	}
 	if returnedCollector.ID != updatedCollector.ID {
-		t.Errorf("UpdateHostedCollector() expected ID `%s`, got `%s`", defaultCollector.ID, returnedCollector.ID)
+		t.Errorf("UpdateHostedCollector() expected ID `%d`, got `%d`", defaultCollector.ID, returnedCollector.ID)
 		return
 	}
 	if returnedCollector.Name == defaultCollector.Name {

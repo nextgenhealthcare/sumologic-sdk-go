@@ -6,6 +6,10 @@ go:
   - 1.9
   - tip
 
+script:
+- go test
+- go vet
+
 matrix:
   fast_finish: true
   allow_failures:
