@@ -7,8 +7,8 @@ go:
   - tip
 
 script:
-- go test
-- go vet
+- make test
+- make vet
 
 matrix:
   fast_finish: true
