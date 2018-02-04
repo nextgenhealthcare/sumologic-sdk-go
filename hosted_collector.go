@@ -73,7 +73,7 @@ func (s *Client) GetHostedCollector(id int) (*Collector, string, error) {
 	case http.StatusNotFound:
 		return nil, "", ErrCollectorNotFound
 	default:
-		return nil, "", fmt.Errorf("Unknown Response with Sumo Logic: `%s`", resp.StatusCode)
+		return nil, "", fmt.Errorf("Unknown Response with Sumo Logic: `%d`", resp.StatusCode)
 	}
 }
 
@@ -113,9 +113,9 @@ func (s *Client) CreateHostedCollector(collector Collector) (*Collector, error) 
 	case http.StatusUnauthorized:
 		return nil, ErrClientAuthenticationError
 	case http.StatusBadRequest:
-		return nil, fmt.Errorf("Bad Request. Please check if a collector with this name `%` already exists", collector.Name)
+		return nil, fmt.Errorf("Bad Request. Please check if a collector with this name `%s` already exists", collector.Name)
 	default:
-		return nil, fmt.Errorf("Unknown Response with Sumo Logic: `%s`", resp.StatusCode)
+		return nil, fmt.Errorf("Unknown Response with Sumo Logic: `%d`", resp.StatusCode)
 	}
 }
 
@@ -156,9 +156,9 @@ func (s *Client) UpdateHostedCollector(collector Collector, etag string) (*Colle
 	case http.StatusUnauthorized:
 		return nil, ErrClientAuthenticationError
 	case http.StatusBadRequest:
-		return nil, fmt.Errorf("Bad Request. Please check if a collector with this name `%` already exists", collector.Name)
+		return nil, fmt.Errorf("Bad Request. Please check if a collector with this name `%s` already exists", collector.Name)
 	default:
-		return nil, fmt.Errorf("Unknown Response with Sumo Logic: `%s`", resp.StatusCode)
+		return nil, fmt.Errorf("Unknown Response with Sumo Logic: `%d`", resp.StatusCode)
 	}
 }
 
@@ -183,6 +183,6 @@ func (s *Client) DeleteHostedCollector(id int) error {
 	case http.StatusUnauthorized:
 		return ErrClientAuthenticationError
 	default:
-		return fmt.Errorf("Unknown Response with Sumo Logic: `%s`", resp.StatusCode)
+		return fmt.Errorf("Unknown Response with Sumo Logic: `%d`", resp.StatusCode)
 	}
 }
