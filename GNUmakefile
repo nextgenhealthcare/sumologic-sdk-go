@@ -7,7 +7,7 @@ build: fmtcheck
 	go install
 
 test: fmtcheck
-	go test $(TEST) -timeout=30s -parallel=4
+	go test $(TEST) -v -timeout=30s -parallel=4
 
 vet:
 	@echo "go vet ."
@@ -24,4 +24,7 @@ fmt:
 fmtcheck:
 	@sh -c "'$(CURDIR)/scripts/gofmtcheck.sh'"
 
-.PHONY: build test vet fmt fmtcheck
+errcheck:
+	@sh -c "'$(CURDIR)/scripts/errcheck.sh'"
+
+.PHONY: build test vet fmt fmtcheck errcheck
