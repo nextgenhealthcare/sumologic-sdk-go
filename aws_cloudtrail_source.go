@@ -66,6 +66,10 @@ type AWSBucketAuthentication struct {
 // It's useful for ignoring errors (e.g. delete if exists).
 var ErrSourceNotFound = errors.New("Source not found")
 
+// ErrAwsAuthenticationError is returned for authentication errors with AWS.
+// Due to IAM's eventual consistency, it may be useful to retry.
+var ErrAwsAuthenticationError = errors.New("Authentication Error with Sumo Logic")
+
 // GetAWSCloudTrailSource gets the source with the specified ID.
 func (s *Client) GetAWSCloudTrailSource(collectorID int, id int) (*AWSCloudTrailSource, string, error) {
 
@@ -82,12 +86,12 @@ func (s *Client) GetAWSCloudTrailSource(collectorID int, id int) (*AWSCloudTrail
 	}
 	defer resp.Body.Close()
 
-	ResponseBody, _ := ioutil.ReadAll(resp.Body)
+	responseBody, _ := ioutil.ReadAll(resp.Body)
 
 	switch resp.StatusCode {
 	case http.StatusOK:
 		var r = new(AWSCloudTrailSourceRequest)
-		err = json.Unmarshal(ResponseBody, &r)
+		err = json.Unmarshal(responseBody, &r)
 		if err != nil {
 			return nil, "", err
 		}
@@ -143,6 +147,10 @@ func (s *Client) CreateAWSCloudTrailSource(collectorID int, source AWSCloudTrail
 		if err != nil {
 			return nil, fmt.Errorf("Bad Request. Please check if a source with this name `%s` already exists", source.Name)
 		}
+		if e.Message == "Cannot authenticate with AWS." ||
+			e.Message == "Invalid IAM role: 'errorCode=AccessDenied'." {
+			return nil, ErrAwsAuthenticationError
+		}
 		return nil, fmt.Errorf("Bad Request. %s", e.Message)
 	default:
 		return nil, fmt.Errorf("Unknown Response with Sumo Logic: `%d`", resp.StatusCode)
@@ -172,12 +180,12 @@ func (s *Client) UpdateAWSCloudTrailSource(collectorID int, source AWSCloudTrail
 	}
 	defer resp.Body.Close()
 
-	ResponseBody, _ := ioutil.ReadAll(resp.Body)
+	responseBody, _ := ioutil.ReadAll(resp.Body)
 
 	switch resp.StatusCode {
 	case http.StatusOK:
 		var r = new(AWSCloudTrailSourceRequest)
-		err = json.Unmarshal(ResponseBody, &r)
+		err = json.Unmarshal(responseBody, &r)
 		if err != nil {
 			return nil, err
 		}
@@ -186,6 +194,12 @@ func (s *Client) UpdateAWSCloudTrailSource(collectorID int, source AWSCloudTrail
 	case http.StatusUnauthorized:
 		return nil, ErrClientAuthenticationError
 	case http.StatusBadRequest:
+		var e = new(Error)
+		err = json.Unmarshal(responseBody, &e)
+		if e.Message == "Cannot authenticate with AWS." ||
+			e.Message == "Invalid IAM role: 'errorCode=AccessDenied'." {
+			return nil, ErrAwsAuthenticationError
+		}
 		return nil, fmt.Errorf("Bad Request. Please check if a source with this name `%s` already exists", source.Name)
 	default:
 		return nil, fmt.Errorf("Unknown Response with Sumo Logic: `%d`", resp.StatusCode)
