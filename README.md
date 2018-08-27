@@ -1,7 +1,7 @@
-[![GoDoc](http://img.shields.io/badge/godoc-reference-blue.svg)](https://godoc.org/github.com/brandonstevens/sumologic-sdk-go)
+[![GoDoc](http://img.shields.io/badge/godoc-reference-blue.svg)](https://godoc.org/github.com/nextgenhealthcare/sumologic-sdk-go)
 [![license](https://img.shields.io/github/license/mashape/apistatus.svg)](https://choosealicense.com/licenses/mit/)
-[![Build Status](https://travis-ci.org/brandonstevens/sumologic-sdk-go.svg)](https://travis-ci.org/brandonstevens/sumologic-sdk-go)
-[![Go Report Card](https://goreportcard.com/badge/github.com/brandonstevens/sumologic-sdk-go)](https://goreportcard.com/report/github.com/brandonstevens/sumologic-sdk-go)
+[![Build Status](https://travis-ci.org/nextgenhealthcare/sumologic-sdk-go.svg)](https://travis-ci.org/nextgenhealthcare/sumologic-sdk-go)
+[![Go Report Card](https://goreportcard.com/badge/github.com/nextgenhealthcare/sumologic-sdk-go)](https://goreportcard.com/report/github.com/nextgenhealthcare/sumologic-sdk-go)
 
 # SumoLogic API in Go
 
@@ -18,7 +18,7 @@ The initial release is focused on being consumed by a Terraform provider in AWS 
 ## Installation
 
 ```go
-import "github.com/brandonstevens/sumologic-sdk-go"
+import "github.com/nextgenhealthcare/sumologic-sdk-go"
 ```
 
 ## Usage
