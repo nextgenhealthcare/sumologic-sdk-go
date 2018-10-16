@@ -9,24 +9,24 @@ import (
 	"testing"
 )
 
-var defaultAWSCloudTrailSource = AWSCloudTrailSource{
+var defaultAWSLogSource = AWSLogSource{
 	ID:          1234567890,
 	Name:        "test",
 	CollectorID: 1234567890,
 }
 
-func TestGetAWSCloudTrailSourceOK(t *testing.T) {
+func TestGetAWSLogSourceOK(t *testing.T) {
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 		if r.Method != "GET" {
 			t.Errorf("Expected ‘GET’ request, got ‘%s’", r.Method)
 		}
-		expectedURL := fmt.Sprintf("/collectors/%d/sources/%d", defaultAWSCloudTrailSource.CollectorID, defaultAWSCloudTrailSource.ID)
+		expectedURL := fmt.Sprintf("/collectors/%d/sources/%d", defaultAWSLogSource.CollectorID, defaultAWSLogSource.ID)
 		if r.URL.EscapedPath() != expectedURL {
 			t.Errorf("Expected request to ‘%s’, got ‘%s’", expectedURL, r.URL.EscapedPath())
 		}
-		body, _ := json.Marshal(AWSCloudTrailSourceRequest{
-			Source: defaultAWSCloudTrailSource,
+		body, _ := json.Marshal(AWSLogSourceRequest{
+			Source: defaultAWSLogSource,
 		})
 		w.Write(body)
 	}))
@@ -38,24 +38,24 @@ func TestGetAWSCloudTrailSourceOK(t *testing.T) {
 		return
 	}
 
-	returnedSource, _, err := c.GetAWSCloudTrailSource(defaultAWSCloudTrailSource.CollectorID, defaultAWSCloudTrailSource.ID)
+	returnedSource, _, err := c.GetAWSLogSource(defaultAWSLogSource.CollectorID, defaultAWSLogSource.ID)
 	if err != nil {
-		t.Errorf("GetAWSCloudTrailSource() returned an error: %s", err)
+		t.Errorf("GetAWSLogSource() returned an error: %s", err)
 		return
 	}
-	if returnedSource.ID != defaultAWSCloudTrailSource.ID {
-		t.Errorf("GetAWSCloudTrailSource() expected ID `%d`, got `%d`", defaultAWSCloudTrailSource.ID, returnedSource.ID)
+	if returnedSource.ID != defaultAWSLogSource.ID {
+		t.Errorf("GetAWSLogSource() expected ID `%d`, got `%d`", defaultAWSLogSource.ID, returnedSource.ID)
 		return
 	}
 }
 
-func TestGetAWSCloudTrailSourceDoesntExist(t *testing.T) {
+func TestGetAWSLogSourceDoesntExist(t *testing.T) {
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusNotFound)
 		if r.Method != "GET" {
 			t.Errorf("Expected ‘GET’ request, got ‘%s’", r.Method)
 		}
-		expectedURL := fmt.Sprintf("/collectors/%d/sources/%d", defaultAWSCloudTrailSource.CollectorID, defaultAWSCloudTrailSource.ID)
+		expectedURL := fmt.Sprintf("/collectors/%d/sources/%d", defaultAWSLogSource.CollectorID, defaultAWSLogSource.ID)
 		if r.URL.EscapedPath() != expectedURL {
 			t.Errorf("Expected request to ‘%s’, got ‘%s’", expectedURL, r.URL.EscapedPath())
 		}
@@ -68,20 +68,20 @@ func TestGetAWSCloudTrailSourceDoesntExist(t *testing.T) {
 		return
 	}
 
-	_, _, err = c.GetAWSCloudTrailSource(defaultAWSCloudTrailSource.CollectorID, defaultAWSCloudTrailSource.ID)
+	_, _, err = c.GetAWSLogSource(defaultAWSLogSource.CollectorID, defaultAWSLogSource.ID)
 	if err != ErrSourceNotFound {
-		t.Errorf("GetAWSCloudTrailSource() returned the wrong error: %s", err)
+		t.Errorf("GetAWSLogSource() returned the wrong error: %s", err)
 		return
 	}
 }
 
-func TestCreateAWSCloudTrailSourceOK(t *testing.T) {
+func TestCreateAWSLogSourceOK(t *testing.T) {
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusCreated)
 		if r.Method != "POST" {
 			t.Errorf("Expected ‘POST’ request, got ‘%s’", r.Method)
 		}
-		expectedURL := fmt.Sprintf("/collectors/%d/sources", defaultAWSCloudTrailSource.CollectorID)
+		expectedURL := fmt.Sprintf("/collectors/%d/sources", defaultAWSLogSource.CollectorID)
 		if r.URL.EscapedPath() != expectedURL {
 			t.Errorf("Expected request to ‘/collectors’, got ‘%s’", r.URL.EscapedPath())
 		}
@@ -89,7 +89,7 @@ func TestCreateAWSCloudTrailSourceOK(t *testing.T) {
 			t.Errorf("Expected response to be content-type ‘application/json’, got ‘%s’", ctype)
 		}
 		body, _ := ioutil.ReadAll(r.Body)
-		sr := new(AWSCloudTrailSourceRequest)
+		sr := new(AWSLogSourceRequest)
 		err := json.Unmarshal(body, &sr)
 		if err != nil {
 			t.Errorf("Unable to unmarshal CollectorRequest, got `%s`", body)
@@ -113,26 +113,26 @@ func TestCreateAWSCloudTrailSourceOK(t *testing.T) {
 		return
 	}
 
-	returnedSource, err := c.CreateAWSCloudTrailSource(defaultAWSCloudTrailSource.CollectorID, AWSCloudTrailSource{
+	returnedSource, err := c.CreateAWSLogSource(defaultAWSLogSource.CollectorID, AWSLogSource{
 		Name: "test",
 	})
 	if err != nil {
-		t.Errorf("CreateAWSCloudTrailSource() returned an error: %s", err)
+		t.Errorf("CreateAWSLogSource() returned an error: %s", err)
 		return
 	}
 	if returnedSource.ID != 1234567890 {
-		t.Errorf("CreateAWSCloudTrailSource() expected ID 1234567890, got `%d`", returnedSource.ID)
+		t.Errorf("CreateAWSLogSource() expected ID 1234567890, got `%d`", returnedSource.ID)
 		return
 	}
 }
 
-func TestCreateAWSCloudTrailSourceAlreadyExists(t *testing.T) {
+func TestCreateAWSLogSourceAlreadyExists(t *testing.T) {
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 		if r.Method != "POST" {
 			t.Errorf("Expected ‘POST’ request, got ‘%s’", r.Method)
 		}
-		expectedURL := fmt.Sprintf("/collectors/%d/sources", defaultAWSCloudTrailSource.CollectorID)
+		expectedURL := fmt.Sprintf("/collectors/%d/sources", defaultAWSLogSource.CollectorID)
 		if r.URL.EscapedPath() != expectedURL {
 			t.Errorf("Expected request to ‘/collectors’, got ‘%s’", r.URL.EscapedPath())
 		}
@@ -148,31 +148,31 @@ func TestCreateAWSCloudTrailSourceAlreadyExists(t *testing.T) {
 		return
 	}
 
-	_, err = c.CreateAWSCloudTrailSource(defaultAWSCloudTrailSource.CollectorID, AWSCloudTrailSource{
+	_, err = c.CreateAWSLogSource(defaultAWSLogSource.CollectorID, AWSLogSource{
 		Name: "test",
 	})
 	if err == nil {
-		t.Errorf("CreateAWSCloudTrailSource() did not return an error: %s", err)
+		t.Errorf("CreateAWSLogSource() did not return an error: %s", err)
 		return
 	}
 }
 
-func TestUpdateAWSCloudTrailSourceOK(t *testing.T) {
-	updatedSource := defaultAWSCloudTrailSource
+func TestUpdateAWSLogSourceOK(t *testing.T) {
+	updatedSource := defaultAWSLogSource
 	updatedSource.Name = "Updated"
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 		if r.Method != "PUT" {
 			t.Errorf("Expected ‘PUT’ request, got ‘%s’", r.Method)
 		}
-		expectedURL := fmt.Sprintf("/collectors/%d/sources/%d", defaultAWSCloudTrailSource.CollectorID, defaultAWSCloudTrailSource.ID)
+		expectedURL := fmt.Sprintf("/collectors/%d/sources/%d", defaultAWSLogSource.CollectorID, defaultAWSLogSource.ID)
 		if r.URL.EscapedPath() != expectedURL {
 			t.Errorf("Expected request to ‘%s’, got ‘%s’", expectedURL, r.URL.EscapedPath())
 		}
 		if r.Header.Get("If-Match") != "etag" {
 			t.Errorf("Expected Etag of `etag`, got `%s`", r.Header.Get("If-Match"))
 		}
-		body, _ := json.Marshal(AWSCloudTrailSourceRequest{
+		body, _ := json.Marshal(AWSLogSourceRequest{
 			Source: updatedSource,
 		})
 		w.Write(body)
@@ -185,30 +185,30 @@ func TestUpdateAWSCloudTrailSourceOK(t *testing.T) {
 		return
 	}
 
-	returnedSource, err := c.UpdateAWSCloudTrailSource(defaultAWSCloudTrailSource.CollectorID, updatedSource, "etag")
+	returnedSource, err := c.UpdateAWSLogSource(defaultAWSLogSource.CollectorID, updatedSource, "etag")
 	if err != nil {
-		t.Errorf("UpdateAWSCloudTrailSource() returned an error: %s", err)
+		t.Errorf("UpdateAWSLogSource() returned an error: %s", err)
 		return
 	}
 	if returnedSource.ID != updatedSource.ID {
-		t.Errorf("UpdateAWSCloudTrailSource() expected ID `%d`, got `%d`", defaultAWSCloudTrailSource.ID, returnedSource.ID)
+		t.Errorf("UpdateAWSLogSource() expected ID `%d`, got `%d`", defaultAWSLogSource.ID, returnedSource.ID)
 		return
 	}
-	if returnedSource.Name == defaultAWSCloudTrailSource.Name {
-		t.Errorf("UpdateAWSCloudTrailSource() did not update the name")
+	if returnedSource.Name == defaultAWSLogSource.Name {
+		t.Errorf("UpdateAWSLogSource() did not update the name")
 		return
 	}
 }
 
-func TestUpdateAWSCloudTrailSourceAlreadyExists(t *testing.T) {
-	updatedSource := defaultAWSCloudTrailSource
+func TestUpdateAWSLogSourceAlreadyExists(t *testing.T) {
+	updatedSource := defaultAWSLogSource
 	updatedSource.Name = "Updated"
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 		if r.Method != "PUT" {
 			t.Errorf("Expected ‘PUT’ request, got ‘%s’", r.Method)
 		}
-		expectedURL := fmt.Sprintf("/collectors/%d/sources/%d", defaultAWSCloudTrailSource.CollectorID, defaultAWSCloudTrailSource.ID)
+		expectedURL := fmt.Sprintf("/collectors/%d/sources/%d", defaultAWSLogSource.CollectorID, defaultAWSLogSource.ID)
 		if r.URL.EscapedPath() != expectedURL {
 			t.Errorf("Expected request to ‘%s’, got ‘%s’", expectedURL, r.URL.EscapedPath())
 		}
@@ -224,20 +224,20 @@ func TestUpdateAWSCloudTrailSourceAlreadyExists(t *testing.T) {
 		return
 	}
 
-	_, err = c.UpdateAWSCloudTrailSource(defaultAWSCloudTrailSource.CollectorID, updatedSource, "etag")
+	_, err = c.UpdateAWSLogSource(defaultAWSLogSource.CollectorID, updatedSource, "etag")
 	if err == nil {
-		t.Errorf("UpdateAWSCloudTrailSource() did not return an error: %s", err)
+		t.Errorf("UpdateAWSLogSource() did not return an error: %s", err)
 		return
 	}
 }
 
-func TestDeleteAWSCloudTrailSourceOK(t *testing.T) {
+func TestDeleteAWSLogSourceOK(t *testing.T) {
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 		if r.Method != "DELETE" {
 			t.Errorf("Expected ‘DELETE’ request, got ‘%s’", r.Method)
 		}
-		expectedURL := fmt.Sprintf("/collectors/%d/sources/%d", defaultAWSCloudTrailSource.CollectorID, defaultAWSCloudTrailSource.ID)
+		expectedURL := fmt.Sprintf("/collectors/%d/sources/%d", defaultAWSLogSource.CollectorID, defaultAWSLogSource.ID)
 		if r.URL.EscapedPath() != expectedURL {
 			t.Errorf("Expected request to ‘%s’, got ‘%s’", expectedURL, r.URL.EscapedPath())
 		}
@@ -250,20 +250,20 @@ func TestDeleteAWSCloudTrailSourceOK(t *testing.T) {
 		return
 	}
 
-	err = c.DeleteAWSCloudTrailSource(defaultAWSCloudTrailSource.CollectorID, defaultAWSCloudTrailSource.ID)
+	err = c.DeleteAWSLogSource(defaultAWSLogSource.CollectorID, defaultAWSLogSource.ID)
 	if err != nil {
-		t.Errorf("DeleteAWSCloudTrailSource() returned an error: %s", err)
+		t.Errorf("DeleteAWSLogSource() returned an error: %s", err)
 		return
 	}
 }
 
-func TestDeleteAWSCloudTrailSourceDoesntExist(t *testing.T) {
+func TestDeleteAWSLogSourceDoesntExist(t *testing.T) {
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusNotFound)
 		if r.Method != "DELETE" {
 			t.Errorf("Expected ‘DELETE’ request, got ‘%s’", r.Method)
 		}
-		expectedURL := fmt.Sprintf("/collectors/%d/sources/%d", defaultAWSCloudTrailSource.CollectorID, defaultAWSCloudTrailSource.ID)
+		expectedURL := fmt.Sprintf("/collectors/%d/sources/%d", defaultAWSLogSource.CollectorID, defaultAWSLogSource.ID)
 		if r.URL.EscapedPath() != expectedURL {
 			t.Errorf("Expected request to ‘%s’, got ‘%s’", expectedURL, r.URL.EscapedPath())
 		}
@@ -276,9 +276,9 @@ func TestDeleteAWSCloudTrailSourceDoesntExist(t *testing.T) {
 		return
 	}
 
-	err = c.DeleteAWSCloudTrailSource(defaultAWSCloudTrailSource.CollectorID, defaultAWSCloudTrailSource.ID)
+	err = c.DeleteAWSLogSource(defaultAWSLogSource.CollectorID, defaultAWSLogSource.ID)
 	if err != ErrSourceNotFound {
-		t.Errorf("DeleteAWSCloudTrailSource() returned the wrong error: %s", err)
+		t.Errorf("DeleteAWSLogSource() returned the wrong error: %s", err)
 		return
 	}
 }
