@@ -9,13 +9,13 @@ import (
 	"net/url"
 )
 
-// AWSCloudTrailSource is a necessary wrapper for source API calls.
-type AWSCloudTrailSourceRequest struct {
-	Source AWSCloudTrailSource `json:"source"`
+// AWSLogSource is a necessary wrapper for source API calls.
+type AWSLogSourceRequest struct {
+	Source AWSLogSource `json:"source"`
 }
 
-// AWSCloudTrailSource can various types of sources including Cloudtrail and S3.
-type AWSCloudTrailSource struct {
+// AWSLogSource can various types of sources including Cloudtrail and S3.
+type AWSLogSource struct {
 	ID                 int                    `json:"id,omitempty"`
 	Name               string                 `json:"name"`
 	CollectorID        int                    `json:"CollectorId,omitempty"`
@@ -54,8 +54,8 @@ type AWSBucketAuthentication struct {
 	RoleARN string `json:"roleARN"`
 }
 
-// GetAWSCloudTrailSource gets the source with the specified ID.
-func (s *Client) GetAWSCloudTrailSource(collectorID int, id int) (*AWSCloudTrailSource, string, error) {
+// GetAWSLogSource gets the source with the specified ID.
+func (s *Client) GetAWSLogSource(collectorID int, id int) (*AWSLogSource, string, error) {
 
 	relativeURL, _ := url.Parse(fmt.Sprintf("collectors/%d/sources/%d", collectorID, id))
 	url := s.EndpointURL.ResolveReference(relativeURL)
@@ -74,7 +74,7 @@ func (s *Client) GetAWSCloudTrailSource(collectorID int, id int) (*AWSCloudTrail
 
 	switch resp.StatusCode {
 	case http.StatusOK:
-		var r = new(AWSCloudTrailSourceRequest)
+		var r = new(AWSLogSourceRequest)
 		err = json.Unmarshal(responseBody, &r)
 		if err != nil {
 			return nil, "", err
@@ -90,10 +90,10 @@ func (s *Client) GetAWSCloudTrailSource(collectorID int, id int) (*AWSCloudTrail
 	}
 }
 
-// CreateAWSCloudTrailSource creates a new AWSCloudTrailSource.
-func (s *Client) CreateAWSCloudTrailSource(collectorID int, source AWSCloudTrailSource) (*AWSCloudTrailSource, error) {
+// CreateAWSLogSource creates a new AWSLogSource.
+func (s *Client) CreateAWSLogSource(collectorID int, source AWSLogSource) (*AWSLogSource, error) {
 
-	request := AWSCloudTrailSourceRequest{
+	request := AWSLogSourceRequest{
 		Source: source,
 	}
 
@@ -116,7 +116,7 @@ func (s *Client) CreateAWSCloudTrailSource(collectorID int, source AWSCloudTrail
 
 	switch resp.StatusCode {
 	case http.StatusCreated:
-		var r = new(AWSCloudTrailSourceRequest)
+		var r = new(AWSLogSourceRequest)
 		err = json.Unmarshal(responseBody, &r)
 		if err != nil {
 			return nil, err
@@ -141,9 +141,9 @@ func (s *Client) CreateAWSCloudTrailSource(collectorID int, source AWSCloudTrail
 	}
 }
 
-// UpdateAWSCloudTrailSource updates an existing AWS Bucket source.
-func (s *Client) UpdateAWSCloudTrailSource(collectorID int, source AWSCloudTrailSource, etag string) (*AWSCloudTrailSource, error) {
-	request := AWSCloudTrailSourceRequest{
+// UpdateAWSLogSource updates an existing AWS Bucket source.
+func (s *Client) UpdateAWSLogSource(collectorID int, source AWSLogSource, etag string) (*AWSLogSource, error) {
+	request := AWSLogSourceRequest{
 		Source: source,
 	}
 
@@ -168,7 +168,7 @@ func (s *Client) UpdateAWSCloudTrailSource(collectorID int, source AWSCloudTrail
 
 	switch resp.StatusCode {
 	case http.StatusOK:
-		var r = new(AWSCloudTrailSourceRequest)
+		var r = new(AWSLogSourceRequest)
 		err = json.Unmarshal(responseBody, &r)
 		if err != nil {
 			return nil, err
@@ -190,8 +190,8 @@ func (s *Client) UpdateAWSCloudTrailSource(collectorID int, source AWSCloudTrail
 	}
 }
 
-// DeleteAWSCloudTrailSource deletes the source with the specified ID.
-func (s *Client) DeleteAWSCloudTrailSource(collectorID int, id int) error {
+// DeleteAWSLogSource deletes the source with the specified ID.
+func (s *Client) DeleteAWSLogSource(collectorID int, id int) error {
 	c, _ := url.Parse(fmt.Sprintf("collectors/%d/sources/%d", collectorID, id))
 	req, err := http.NewRequest("DELETE", s.EndpointURL.ResolveReference(c).String(), nil)
 	req.Header.Add("Authorization", "Basic "+s.AuthToken)
