@@ -15,6 +15,10 @@ type CollectorRequest struct {
 	Collector Collector `json:"collector"`
 }
 
+type CollectorsRequest struct {
+	Collectors []*Collector `json:"collectors"`
+}
+
 // Collector can either be an installed or hosted collector.
 // Installed collectors are installed as agents on servers.
 // Hosted collectors receive data via HTTP or more specicialized (e.g. reading from AWS S3).
@@ -68,6 +72,41 @@ func (s *Client) GetHostedCollector(id int) (*Collector, string, error) {
 		}
 
 		return &cr.Collector, resp.Header.Get("ETag"), nil
+	case http.StatusUnauthorized:
+		return nil, "", ErrClientAuthenticationError
+	case http.StatusNotFound:
+		return nil, "", ErrCollectorNotFound
+	default:
+		return nil, "", fmt.Errorf("Unknown Response with Sumo Logic: `%d`", resp.StatusCode)
+	}
+}
+
+// ListHostedCollector lists Hosted Collectors.
+func (s *Client) ListHostedCollectors() ([]*Collector, string, error) {
+	relativeURL, _ := url.Parse("collectors")
+	url := s.EndpointURL.ResolveReference(relativeURL)
+	req, err := http.NewRequest("GET", url.String(), nil)
+	req.Header.Add("Content-Type", "application/json")
+	req.Header.Add("Authorization", "Basic "+s.AuthToken)
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return nil, "", err
+	}
+	defer resp.Body.Close()
+
+	ResponseBody, _ := ioutil.ReadAll(resp.Body)
+
+	switch resp.StatusCode {
+	case http.StatusOK:
+		var cr = new(CollectorsRequest)
+		err = json.Unmarshal(ResponseBody, &cr)
+		if err != nil {
+			return nil, "", err
+		}
+
+		return cr.Collectors, resp.Header.Get("ETag"), nil
 	case http.StatusUnauthorized:
 		return nil, "", ErrClientAuthenticationError
 	case http.StatusNotFound:

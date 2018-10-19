@@ -101,6 +101,42 @@ func TestGetHostedCollectorDoesntExist(t *testing.T) {
 	}
 }
 
+func TestListHostedCollectorsOK(t *testing.T) {
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		collectors := make([]*Collector, 1)
+		collectors[0] = &defaultCollector
+		w.WriteHeader(http.StatusOK)
+		if r.Method != "GET" {
+			t.Errorf("Expected ‘GET’ request, got ‘%s’", r.Method)
+		}
+		expectedURL := "/collectors"
+		if r.URL.EscapedPath() != expectedURL {
+			t.Errorf("Expected request to ‘%s’, got ‘%s’", expectedURL, r.URL.EscapedPath())
+		}
+		body, _ := json.Marshal(CollectorsRequest{
+			Collectors: collectors,
+		})
+		w.Write(body)
+	}))
+	defer ts.Close()
+
+	c, err := NewClient("accessToken", ts.URL)
+	if err != nil {
+		t.Errorf("NewClient() returned an error: %s", err)
+		return
+	}
+
+	returnedCollectors, _, err := c.ListHostedCollectors()
+	if err != nil {
+		t.Errorf("ListHostedCollectors() returned an error: %s", err)
+		return
+	}
+	if returnedCollectors[0].ID != defaultCollector.ID {
+		t.Errorf("ListHostedCollectors() expected ID `%d`, got `%d`", defaultCollector.ID, returnedCollectors[0].ID)
+		return
+	}
+}
+
 func TestCreateHostedCollectorOK(t *testing.T) {
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusCreated)
