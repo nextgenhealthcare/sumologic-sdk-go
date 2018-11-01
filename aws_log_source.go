@@ -16,18 +16,21 @@ type AWSLogSourceRequest struct {
 
 // AWSLogSource can various types of sources including Cloudtrail and S3.
 type AWSLogSource struct {
-	ID                 int                    `json:"id,omitempty"`
-	Name               string                 `json:"name"`
-	CollectorID        int                    `json:"CollectorId,omitempty"`
-	Description        string                 `json:"description,omitempty"`
-	Category           string                 `json:"category,omitempty"`
-	TimeZone           string                 `json:"timezone,omitempty"`
-	SourceType         string                 `json:"sourceType,omitempty"`
-	ContentType        string                 `json:"contentType,omitempty"`
-	ScanInterval       int                    `json:"scanInterval,omitempty"`
-	Paused             bool                   `json:"paused"`
-	CutoffRelativeTime string                 `json:"cutoffRelativeTime"`
-	ThirdPartyRef      AWSBucketThirdPartyRef `json:"thirdPartyRef,omitempty"`
+	ID                         int                    `json:"id,omitempty"`
+	Name                       string                 `json:"name"`
+	CollectorID                int                    `json:"CollectorId,omitempty"`
+	Description                string                 `json:"description,omitempty"`
+	Category                   string                 `json:"category,omitempty"`
+	TimeZone                   string                 `json:"timezone,omitempty"`
+	SourceType                 string                 `json:"sourceType,omitempty"`
+	ContentType                string                 `json:"contentType,omitempty"`
+	ScanInterval               int                    `json:"scanInterval,omitempty"`
+	Paused                     bool                   `json:"paused"`
+	CutoffRelativeTime         string                 `json:"cutoffRelativeTime,omitempty"`
+	MultilineProcessingEnabled bool                   `json:"multilineProcessingEnabled,omitempty"`
+	UseAutolineMatching        bool                   `json:"useAutolineMatching,omitempty"`
+	ManualPrefixRegexp         string                 `json:"manualPrefixRegexp,omitempty"`
+	ThirdPartyRef              AWSBucketThirdPartyRef `json:"thirdPartyRef,omitempty"`
 }
 
 type AWSBucketThirdPartyRef struct {
