@@ -24,7 +24,9 @@ type HTTPSource struct {
 	TimeZone                   string `json:"timezone,omitempty"`
 	SourceType                 string `json:"sourceType,omitempty"`
 	MessagePerRequest          bool   `json:"messagePerRequest"`
-	MultilineProcessingEnabled bool   `json:"multilineProcessingEnabled"`
+	MultilineProcessingEnabled bool   `json:"multilineProcessingEnabled,omitempty"`
+	UseAutolineMatching        bool   `json:"useAutolineMatching,omitempty"`
+	ManualPrefixRegexp         string `json:"manualPrefixRegexp,omitempty"`
 	Url                        string `json:"url,omitempty"`
 }
 
