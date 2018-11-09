@@ -31,6 +31,7 @@ type AWSLogSource struct {
 	MultilineProcessingEnabled bool                   `json:"multilineProcessingEnabled,omitempty"`
 	UseAutolineMatching        bool                   `json:"useAutolineMatching,omitempty"`
 	ManualPrefixRegexp         string                 `json:"manualPrefixRegexp,omitempty"`
+	Url                        string                 `json:"url,omitempty"`
 	ThirdPartyRef              AWSBucketThirdPartyRef `json:"thirdPartyRef,omitempty"`
 }
 
