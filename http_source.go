@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"net/url"
 )
@@ -16,18 +17,19 @@ type HTTPSourceRequest struct {
 
 // HTTPSource can various types of sources including Cloudtrail and S3.
 type HTTPSource struct {
-	ID                         int    `json:"id,omitempty"`
-	Name                       string `json:"name"`
-	CollectorID                int    `json:"CollectorId,omitempty"`
-	Description                string `json:"description,omitempty"`
-	Category                   string `json:"category,omitempty"`
-	TimeZone                   string `json:"timezone,omitempty"`
-	SourceType                 string `json:"sourceType,omitempty"`
-	MessagePerRequest          bool   `json:"messagePerRequest"`
-	MultilineProcessingEnabled bool   `json:"multilineProcessingEnabled,omitempty"`
-	UseAutolineMatching        bool   `json:"useAutolineMatching,omitempty"`
-	ManualPrefixRegexp         string `json:"manualPrefixRegexp,omitempty"`
-	Url                        string `json:"url,omitempty"`
+	ID                         int      `json:"id,omitempty"`
+	Name                       string   `json:"name"`
+	CollectorID                int      `json:"CollectorId,omitempty"`
+	Description                string   `json:"description,omitempty"`
+	Category                   string   `json:"category,omitempty"`
+	TimeZone                   string   `json:"timezone,omitempty"`
+	SourceType                 string   `json:"sourceType,omitempty"`
+	MessagePerRequest          bool     `json:"messagePerRequest"`
+	MultilineProcessingEnabled bool     `json:"multilineProcessingEnabled"`
+	UseAutolineMatching        bool     `json:"useAutolineMatching,"`
+	ManualPrefixRegexp         string   `json:"manualPrefixRegexp,omitempty"`
+	Url                        string   `json:"url,omitempty"`
+	Filters                    []Filter `json:"filters,omitempty"`
 }
 
 // GetHTTPSource gets the source with the specified ID.
@@ -72,6 +74,8 @@ func (s *Client) CreateHTTPSource(collectorID int, source HTTPSource) (*HTTPSour
 	request := HTTPSourceRequest{
 		Source: source,
 	}
+
+	log.Printf("Sumologic API Request: %+v", request)
 
 	body, _ := json.Marshal(request)
 

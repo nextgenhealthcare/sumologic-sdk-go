@@ -19,3 +19,9 @@ var ErrSourceNotFound = errors.New("Source not found")
 // ErrAwsAuthenticationError is returned for authentication errors with AWS.
 // Due to IAM's eventual consistency, it may be useful to retry.
 var ErrAwsAuthenticationError = errors.New("Authentication Error with Sumo Logic")
+
+type Filter struct {
+	FilterType string `json:"filterType,omitempty"`
+	Name       string `json:"name,omitempty"`
+	Regexp     string `json:"regexp,omitempty"`
+}

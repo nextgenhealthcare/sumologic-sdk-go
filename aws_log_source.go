@@ -28,11 +28,12 @@ type AWSLogSource struct {
 	ScanInterval               int                    `json:"scanInterval,omitempty"`
 	Paused                     bool                   `json:"paused"`
 	CutoffRelativeTime         string                 `json:"cutoffRelativeTime,omitempty"`
-	MultilineProcessingEnabled bool                   `json:"multilineProcessingEnabled,omitempty"`
-	UseAutolineMatching        bool                   `json:"useAutolineMatching,omitempty"`
+	MultilineProcessingEnabled bool                   `json:"multilineProcessingEnabled"`
+	UseAutolineMatching        bool                   `json:"useAutolineMatching"`
 	ManualPrefixRegexp         string                 `json:"manualPrefixRegexp,omitempty"`
 	Url                        string                 `json:"url,omitempty"`
 	ThirdPartyRef              AWSBucketThirdPartyRef `json:"thirdPartyRef,omitempty"`
+	Filters                    []Filter               `json:"filters,omitempty"`
 }
 
 type AWSBucketThirdPartyRef struct {
